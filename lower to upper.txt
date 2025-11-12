@@ -1,0 +1,53 @@
+%{
+#include <stdio.h>
+#include <ctype.h>
+int pos = 0;   // position tracker for title case
+%}
+
+%%
+[a-z]+        {                      // lowercase → uppercase
+                  for(int i=0; yytext[i]; i++)
+                      putchar(toupper(yytext[i]));
+                  pos += yyleng;
+               }
+
+[A-Z]+        {                      // uppercase → lowercase
+                  for(int i=0; yytext[i]; i++)
+                      putchar(tolower(yytext[i]));
+                  pos += yyleng;
+               }
+
+[ \t\n]+      {                      // spaces, tabs, newlines
+                  for(int i=0; yytext[i]; i++) {
+                      putchar(yytext[i]);
+                      if(yytext[i] == '\n' || yytext[i] == '\t' || yytext[i] == ' ')
+                          pos = 0;   // reset for title case
+                  }
+               }
+
+.             {
+                  // Title case: first alphabet after space/newline -> uppercase
+                  if(pos == 0 && isalpha(yytext[0])) {
+                      putchar(toupper(yytext[0]));
+                      pos++;
+                  } else {
+                      putchar(yytext[0]);
+                      pos++;
+                  }
+               }
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    printf("Enter text (press Ctrl+D to end):\n");
+    yylex();
+    return 0;
+}
+
+
+
+
+lex case_converter.l
+gcc lex.yy.c -o case_converter
+./case_converter

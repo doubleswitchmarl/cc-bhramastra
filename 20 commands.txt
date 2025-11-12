@@ -1,0 +1,23 @@
+20 basic commands
+# 20 Basic Linux Commands
+
+1. pwd        # Show current working directory
+2. ls         # List files and directories
+3. cd         # Change directory
+4. mkdir      # Create a new directory
+5. rmdir      # Remove an empty directory
+6. rm         # Remove files or directories
+7. cp         # Copy files or directories
+8. mv         # Move or rename files
+9. touch      # Create an empty file
+10. cat       # Display file contents
+11. whoami    # Show current username
+12. uname     # Display system information
+13. top       # Show running processes
+14. ps        # Display active processes
+15. kill      # Terminate a process
+16. nano      # Open text editor in terminal
+17. head      # Show first 10 lines of a file
+18. tail      # Show last 10 lines of a file
+19. ifconfig  # Display network configuration
+20. chmod     # Change file permissions

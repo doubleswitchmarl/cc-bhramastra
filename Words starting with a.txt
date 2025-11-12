@@ -1,0 +1,24 @@
+%{
+#include <stdio.h>
+int count = 0;
+%}
+
+%%
+[Aa][a-zA-Z]*   { count++; }     // Match words starting with 'A' or 'a'
+.|\n            ;                // Ignore all other characters
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    printf("Enter text (press Ctrl+D to end):\n");
+    yylex();
+    printf("\nNumber of words starting with 'A' or 'a': %d\n", count);
+    return 0;
+}
+
+
+
+lex count_a_words.l
+gcc lex.yy.c -o count_a_words
+./count_a_words

@@ -1,0 +1,61 @@
+Lex File — infix.l
+
+
+
+%{
+#include "y.tab.h"
+%}
+
+%%
+[0-9]+      { yylval = atoi(yytext); return NUMBER; }
+[+\-*/()]   { return yytext[0]; }
+[ \t\n]     ;        // ignore whitespace
+.           { return yytext[0]; }
+%%
+
+int yywrap() { return 1; }
+
+
+ Yacc File — infix.y
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+%}
+
+%token NUMBER
+%left '+' '-'
+%left '*' '/'
+%left '(' ')'
+
+%%
+input:
+      /* empty */
+    | input expr '\n'   { printf("Result = %d\n", $2); }
+    ;
+
+expr:
+      NUMBER            { $$ = $1; }
+    | expr '+' expr     { $$ = $1 + $3; }
+    | expr '-' expr     { $$ = $1 - $3; }
+    | expr '*' expr     { $$ = $1 * $3; }
+    | expr '/' expr     { $$ = $1 / $3; }
+    | '(' expr ')'      { $$ = $2; }
+    ;
+%%
+
+int main() {
+    printf("Enter infix expression (e.g., (3+4)*5-2):\n");
+    yyparse();
+    return 0;
+}
+
+void yyerror(const char *s) {
+    fprintf(stderr, "Error: %s\n", s);
+}
+
+
+lex infix.l
+yacc -d infix.y
+gcc lex.yy.c y.tab.c -o infix
+./infix

@@ -1,0 +1,60 @@
+Lex file: postfix.l
+
+
+%{
+#include "y.tab.h"
+%}
+
+%%
+[0-9]+      { yylval = atoi(yytext); return NUMBER; }
+[+\-*/]     { return yytext[0]; }
+[ \t\n]     ;       // ignore whitespace
+.           { return yytext[0]; }
+%%
+
+int yywrap() { return 1; }
+
+
+yacc file: postfix.y
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+%}
+
+%token NUMBER
+%left '+' '-'
+%left '*' '/'
+
+%%
+input:
+      /* empty */
+    | input expr '\n'   { printf("Result = %d\n", $2); }
+    ;
+
+expr:
+      NUMBER            { $$ = $1; }
+    | expr expr '+'     { $$ = $1 + $2; }
+    | expr expr '-'     { $$ = $1 - $2; }
+    | expr expr '*'     { $$ = $1 * $2; }
+    | expr expr '/'     { $$ = $1 / $2; }
+    ;
+%%
+
+int main() {
+    printf("Enter postfix expression (tokens separated by space):\n");
+    yyparse();
+    return 0;
+}
+
+void yyerror(const char *s) {
+    fprintf(stderr, "Error: %s\n", s);
+}
+
+
+
+
+lex postfix.l
+yacc -d postfix.y
+gcc lex.yy.c y.tab.c -o postfix
+./postfix

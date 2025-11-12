@@ -1,0 +1,50 @@
+%{
+#include <stdio.h>
+#include "y.tab.h"   // include yacc definitions
+int vowels = 0, consonants = 0;
+%}
+
+%%
+[aAeEiIoOuU]   { vowels++; }
+[b-df-hj-np-tv-zB-DF-HJ-NP-TV-Z]   { consonants++; }
+[ \t\n]        ;     // ignore whitespace
+.              ;     // ignore any other character
+%%
+
+int yywrap() { return 1; }
+
+
+YACC FILE
+%{
+#include <stdio.h>
+int yylex();
+void yyerror(const char *s) { }
+extern int vowels, consonants;
+%}
+
+%%
+input:
+    /* empty */
+    | input line
+    ;
+
+line:
+    '\n'
+    | word '\n'  { printf("Vowels: %d\nConsonants: %d\n", vowels, consonants); }
+    ;
+
+word:
+    /* handled by Lex */
+    ;
+%%
+int main() {
+    printf("Enter a string: ");
+    yyparse();
+    return 0;
+}
+
+
+lex count.l
+yacc -d count.y
+gcc lex.yy.c y.tab.c -o count
+./count
